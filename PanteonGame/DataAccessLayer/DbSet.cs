@@ -16,6 +16,7 @@ namespace DataAccessLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Veri modeli konfigürasyonlarınızı burada yapabilirsiniz
+            // deneme 1
         }
     }
 }
