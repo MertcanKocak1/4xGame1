@@ -1,4 +1,5 @@
-using PanteonGame.Middlewares;
+
+using PanteonGame;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,7 @@ var startup = new Startup(configuration);
 startup.ConfigureServices(builder.Services);
 
 var app = builder.Build();
+startup.Configure(app, app.Environment);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

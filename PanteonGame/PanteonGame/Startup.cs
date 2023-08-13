@@ -1,9 +1,16 @@
-﻿using DataAccessLayer;
+﻿using BusinessLayer.Abstract;
+using BusinessLayer.Concrete;
+using DataAccessLayer;
+using DataAccessLayer.Abstract.Repository;
+using DataAccessLayer.Concrete;
+using DataAccessLayer.Concrete.Repository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNet.OData.Extensions;
 
 namespace PanteonGame
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
@@ -14,12 +21,23 @@ namespace PanteonGame
 
         public void ConfigureServices(IServiceCollection services)
         {
-            string connectionString = Configuration.GetConnectionString("Connection");
-            if (!string.IsNullOrEmpty(connectionString))
-            {
-                services.AddDbContext<DbSet>(options =>
-                    options.UseMySQL(connectionString));
-            }
+            services.AddControllers();
+            services.AddOData();
+            // PostgreSql Connection
+            services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
+            // MongoDb Connection
+            string mongoConnectionString = Configuration.GetConnectionString("MongoConnection");
+            string mongoDatabaseName = Configuration.GetValue<string>("MongoDatabaseName");
+          //  services.AddSingleton(new MongoRepository(mongoConnectionString, mongoDatabaseName));
+
+            services.AddScoped<IJwtService, JwtManager>();
+          
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

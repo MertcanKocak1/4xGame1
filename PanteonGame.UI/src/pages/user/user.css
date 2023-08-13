@@ -1,0 +1,44 @@
+.login-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px;
+  padding: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 300px;
+}
+
+.register-link {
+  margin-top: 30px;
+}
+
+.user-icon {
+  margin-bottom: 20px;
+}
+
+.login-container h1 {
+  margin-bottom: 30px;
+}
+
+.input-container {
+  margin-bottom: 30px;
+  width: 100%; 
+}
+
+
+.login-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 15px 20px;
+  cursor: pointer;
+}
+
+.login-button:hover {
+  background-color: #0056b3;
+}
