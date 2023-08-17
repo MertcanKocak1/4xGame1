@@ -1,6 +1,7 @@
 ﻿using Microsoft.OData.Edm;
 using DTO.Results;
-using Microsoft.AspNet.OData.Builder;
+using Microsoft.AspNetCore.OData;
+using Microsoft.OData.ModelBuilder;
 
 namespace PanteonGame
 {

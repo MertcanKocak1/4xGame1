@@ -6,8 +6,7 @@ using DataAccessLayer.Concrete;
 using DataAccessLayer.Concrete.Repository;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNet.OData.Extensions;
-
+using Microsoft.AspNetCore.OData;
 namespace PanteonGame
 {
     public partial class Startup
@@ -21,8 +20,9 @@ namespace PanteonGame
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddOData();
+            services.AddControllers(opt => opt.EnableEndpointRouting = false)
+                .AddOData(opt => opt.AddRouteComponents("odata", GetEdmModel()).EnableQueryFeatures())
+                ;
             // PostgreSql Connection
             services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
@@ -61,6 +61,7 @@ namespace PanteonGame
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
             });
         }
     }
