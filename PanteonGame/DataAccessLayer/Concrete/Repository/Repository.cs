@@ -1,47 +1,68 @@
-﻿using DataAccessLayer.Abstract.Repository;
+﻿// DataAccessLayer/Concrete/Repository
+using DataAccessLayer.Abstract.Repository;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace DataAccessLayer.Concrete.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        private readonly DbContext _context;
-        private readonly DbSet<T> _dbSet;
+        private readonly AppDbContext _context;
+        private readonly DbSet<TEntity> _dbSet;
 
-        public Repository(DbContext context)
+        public Repository(AppDbContext context)
         {
             _context = context;
-            _dbSet = context.Set<T>();
+            _dbSet = _context.Set<TEntity>();
         }
 
-        public IEnumerable<T> GetAll()
+        public IEnumerable<TEntity> GetAll()
         {
             return _dbSet.ToList();
         }
 
-        public T GetById(int id)
+        public TEntity GetById(object id)
         {
             return _dbSet.Find(id);
         }
 
-        public void Add(T entity)
+        public void Add(TEntity entity)
         {
             _dbSet.Add(entity);
-            _context.SaveChanges();
+            SaveChanges();
         }
 
-        public void Update(T entity)
+        public void Update(TEntity entity)
         {
             _dbSet.Update(entity);
+            SaveChanges();
+        }
+
+        public void Delete(object id)
+        {
+            TEntity entityToDelete = _dbSet.Find(id);
+            if (entityToDelete != null)
+            {
+                _dbSet.Remove(entityToDelete);
+                SaveChanges();
+            }
+        }
+
+        public void SaveChanges()
+        {
             _context.SaveChanges();
         }
 
-        public void Delete(T entity)
+        public TEntity GetById(int id)
         {
-            _dbSet.Remove(entity);
-            _context.SaveChanges();
+            throw new NotImplementedException();
+        }
+
+        public void Delete(TEntity entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

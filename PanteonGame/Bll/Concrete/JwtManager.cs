@@ -5,21 +5,18 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Options;
+using Entities.Jwt;
 
 namespace BusinessLayer.Concrete
 {
     public class JwtManager : IJwtService
     {
-
-        public static string GenerateSecureSecretKey(int length = 32)
-        {
-            using (var randomNumberGenerator = new RNGCryptoServiceProvider())
-            {
-                var randomNumber = new byte[length];
-                randomNumberGenerator.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
+        private readonly JwtSettings _jwtSettings; 
+        public JwtManager(IOptions<JwtSettings> jwtSettings) {
+            _jwtSettings = jwtSettings.Value;
         }
+       
         public string GenerateJwtToken(IdentityUser user)
         {
             var claims = new List<Claim>
@@ -29,8 +26,7 @@ namespace BusinessLayer.Concrete
                 new Claim(ClaimTypes.NameIdentifier, user.Id)
             };
 
-            var secretKey = GenerateSecureSecretKey();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)); var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)); var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(1);
 
             var token = new JwtSecurityToken(

@@ -8,6 +8,6 @@ namespace DTO
 {
     public class BaseDTO
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
     }
 }

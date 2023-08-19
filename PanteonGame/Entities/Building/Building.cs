@@ -1,12 +1,9 @@
-﻿using Entities.Base;
-using System.ComponentModel.DataAnnotations;
+﻿using Entities.MongoDbEntity;
 
-namespace Entities
+namespace Entities.Building
 {
-    public class Building
+    public class Building : BaseMongoDbEntity
     {
-        [Key]
-        public int Id { get; set; }
         public string BuildingType { get; set; }
         public double BuildingCost { get; set; }
         public int ConstructionTime { get; set; }

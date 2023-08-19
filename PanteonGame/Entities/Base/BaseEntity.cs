@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Base
 {
-   public abstract class EntityBase : IBaseEntity
+   public abstract class BaseEntity : IBaseEntity
     {
-        protected EntityBase()
+        protected BaseEntity()
         {
             FirstRecordDate = DateTime.Now;
             FirstRecordIp = "127.0.0.1";
