@@ -14,6 +14,7 @@ using Microsoft.Extensions.Options;
 using Entities.Building;
 using MongoDB.Bson;
 using DataAccessLayer.MongoDb;
+using MongoDB.Driver;
 
 namespace PanteonGame
 {
@@ -28,25 +29,30 @@ namespace PanteonGame
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Controllers and OData Configuration
-            services.AddControllers(opt => opt.EnableEndpointRouting = false)
-                .AddOData(opt => opt.AddRouteComponents("odata", GetEdmModel()).EnableQueryFeatures());
+            // Identity Configuration
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             // PostgreSql Connection
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
 
-            // MongoDb Connection 
-            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings"));
-
+            // MongoDb Settings Configuration
+            services.Configure<MongoDbSettings>(Configuration.GetSection("ConnectionStrings:MongoConnection"));
+            services.Configure<MongoDbSettings>(options =>
+            {
+                options.ConnectionString = Configuration.GetConnectionString("MongoConnection");
+                options.DatabaseName = Configuration["MongoDatabaseName"];
+            });
             services.AddSingleton<IMongoDbSettings>(serviceProvider =>
-                serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+            serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 
-            services.AddScoped<IMongoRepository<Building, ObjectId>, MongoRepository<Building, ObjectId>>();
-            // Identity Configuration
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+                    services.AddScoped<IMongoClient>(serviceProvider =>
+                    {
+                        var settings = serviceProvider.GetRequiredService<IMongoDbSettings>();
+                        return new MongoClient(settings.ConnectionString);
+                    });
 
             // JWT Authentication Configuration
             services.AddAuthentication(opt =>
@@ -69,9 +75,15 @@ namespace PanteonGame
             services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
 
             // Other services
+            services.AddScoped<IMongoRepository<Building, ObjectId>, MongoRepository<Building, ObjectId>>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped<ILogService, LogManager>();
             services.AddScoped<IJwtService, JwtManager>();
+            services.AddScoped<IBuildingService, BuildingManager>();
+
+            // Controllers and OData Configuration
+            services.AddControllers(opt => opt.EnableEndpointRouting = false)
+                .AddOData(opt => opt.AddRouteComponents("odata", GetEdmModel()).EnableQueryFeatures());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -3,6 +3,7 @@ using DTO.Params;
 using MongoDB.Bson;
 using BusinessLayer.Abstract;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace PanteonGame.Controllers
 {
@@ -20,6 +21,7 @@ namespace PanteonGame.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         [Authorize]
         public async Task<IActionResult> Get()
         {

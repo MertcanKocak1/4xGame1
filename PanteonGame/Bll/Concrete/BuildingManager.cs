@@ -110,7 +110,6 @@ namespace BusinessLayer.Concrete
         {
             return new Building
             {
-                Id = ObjectId.Parse(dto.Id),
                 BuildingType = dto.BuildingType,
                 BuildingCost = dto.BuildingCost,
                 ConstructionTime = dto.ConstructionTime

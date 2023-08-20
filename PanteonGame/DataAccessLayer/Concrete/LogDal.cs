@@ -16,7 +16,7 @@ namespace DataAccessLayer.Concrete
         {
             var ent = BringNewLog();
             ent.Message = pmLog.Message;
-            ent.DateCreated = DateTime.Now;
+            ent.DateCreated = DateTime.UtcNow; 
             ent.ClassName = pmLog.ClassName;
 
             _context.Logs.Add(ent);
@@ -48,7 +48,7 @@ namespace DataAccessLayer.Concrete
             ent.FunctionName = pmLogError.FunctionName;
             ent.ErrorMessage = pmLogError.ErrorMessage;
             ent.StackTrace = pmLogError.StackTrace;
-            ent.DateOccured = DateTime.Now;
+            ent.DateOccured = DateTime.UtcNow;
             ent.ClassName = pmLogError.ClassName;
             _context.LogErrors.Add(ent);
             _context.SaveChanges();
