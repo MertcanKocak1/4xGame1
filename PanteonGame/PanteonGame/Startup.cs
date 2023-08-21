@@ -38,6 +38,8 @@ namespace PanteonGame
             services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
 
+            services.AddCors();
+
             // MongoDb Settings Configuration
             services.Configure<MongoDbSettings>(Configuration.GetSection("ConnectionStrings:MongoConnection"));
             services.Configure<MongoDbSettings>(options =>
@@ -97,10 +99,11 @@ namespace PanteonGame
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();

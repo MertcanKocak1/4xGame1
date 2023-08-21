@@ -1,12 +1,12 @@
 import { IBaseParam, IBaseResult } from "./BaseModel";
 
 export interface IBuildingParam extends IBaseParam{
-    BuildingType: string;
-    BuildingCost: number;
-    ConstructionTime: number;
+    buildingType: string;
+    buildingCost?: number;
+    constructionTime?: number;
 }
 export interface IBuildingResult extends IBaseResult { 
-    BuildingType: string;
-    BuildingCost: number;
-    ConstructionTime: number;
+    buildingType: string;
+    buildingCost: number;
+    constructionTime: number;
 }

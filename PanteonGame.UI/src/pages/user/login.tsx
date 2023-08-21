@@ -1,24 +1,32 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import './user.css'; 
 import { Button, TextField, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { RootStoreContext } from "../../helpers/stores/RootStore";
+import { Link, useHistory } from "react-router-dom";
+import { observer } from "mobx-react-lite";
 
 const Login = () => {
+  const history = useHistory();
   const rootStore = useContext(RootStoreContext);
+  const {userStore} = rootStore;
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const handleLogin = () => {
-    if (username === "user" && password === "password") {
-      // Successful login
-      setError("");
-      alert("Successful login!");
-    } else {
-      // Failed login
-      setError("Username or password is wrong");
+  const handleLogin = async () => {
+    try{
+      await userStore.login({UserName: username, PasswordHash: password });
+      if (userStore.error) {
+        setError("Username or Password Wrong."); 
+      }
+      else{
+        history.push("/configuration");
+      }
+    }catch (err) {
+      alert("Unexpected Error.");
     }
+
   };
 
   const handleClickShowPassword = () => {
@@ -66,10 +74,10 @@ const Login = () => {
       {error && <div className="error">{error}</div>}
       
       <div className="register-link">
-        <p>Don't have an account? <a href="#">Register</a></p>
-      </div>
+      <p>Don't have an account? <Link to="/register">Register</Link></p>
+            </div>
     </div>
   );
 };
 
-export default Login;
+export default observer(Login);

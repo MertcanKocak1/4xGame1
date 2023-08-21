@@ -1,6 +1,6 @@
 export interface IBaseParam{
-    id: number;
+    id?: string;
 }
 export interface IBaseResult{
-    id: number;
+    id?: string;
 }
