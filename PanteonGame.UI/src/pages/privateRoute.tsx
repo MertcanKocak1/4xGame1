@@ -1,5 +1,5 @@
 import { Route, Redirect, RouteProps } from 'react-router-dom';
-import JwtHelper from '../../helpers/core/JwtHelper';
+import JwtHelper from '../helpers/core/JwtHelper';
 
 interface PrivateRouteProps extends RouteProps {
     component: React.ComponentType<any>;

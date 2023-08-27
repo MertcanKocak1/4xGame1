@@ -29,15 +29,16 @@ export default class BuildingStore {
 
     ListBuildingData = async (odataString: string) => {
         try {
-            const response: any = await BuildingApi.listeleOData(odataString);
+            const response : any = await BuildingApi.listeleOData(odataString);
             if (response && response.data) {
                 const newBuildingData = {
                     "@odata.count": response.data["@odata.count"],
                     value: response.data.value
                 };
-                this.setBuildingData(newBuildingData); 
+                this.setBuildingData(newBuildingData);
             }
             this.clearError();
+            return this.BuildingData;
         } catch (error) {
             this.handleError(error);
         }

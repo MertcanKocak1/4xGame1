@@ -11,11 +11,19 @@ const getToken = () => {
 const apiInstance = axios.create({
     baseURL: baseUrl,
     headers: {
-        'Authorization': `Bearer ${getToken()}`, 
+        //'Authorization': `Bearer ${getToken()}`, 
         'Content-Type': 'application/json'
     }
 });
-
+apiInstance.interceptors.request.use((config) => {
+    const token = getToken();
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
 const BuildingApi = { 
     listeleOData: (odataString : string): Promise<IEnvelope<IBuildingResult>> => apiInstance.get(`/odata/Building?${odataString}`),
     

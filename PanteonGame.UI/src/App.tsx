@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import Login from "./pages/user/login";
 import Register from './pages/user/register';
-import PrivateRoute from './pages/user/privateRoute';
-import BuildingManagement from './pages/user/buildingManagement';
+import Configuration from './pages/configuration';
+import PrivateRoute from './pages/privateRoute';
 import JwtHelper from './helpers/core/JwtHelper';
 function isLoggedIn() {
   const token = localStorage.getItem('jwtToken');
@@ -12,7 +12,7 @@ function isLoggedIn() {
 function App() {
   return (
     <Router>
-    <PrivateRoute exact path="/configuration" component={BuildingManagement} />
+    <PrivateRoute exact path="/configuration" component={Configuration} />
     <Route exact path="/login">
       {isLoggedIn() ? <Redirect to="/configuration"/> : <Login />}
     </Route>

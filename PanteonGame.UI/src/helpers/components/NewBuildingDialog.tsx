@@ -29,7 +29,12 @@ const NewBuildingDialog= () => {
             addBuilding(building);
             clearProps();
             setDialogOpen(false);
-    }}
+    }
+    else { 
+      alert("Please Enter All The Fields"); 
+    }
+      
+  }
   return (
     <Dialog title={"Add New Building"} onClose={() => setDialogOpen(false)}>
          <p>Building Type</p>

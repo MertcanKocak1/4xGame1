@@ -21,7 +21,6 @@ namespace PanteonGame
     public partial class Startup
     {
         public IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,89 +28,132 @@ namespace PanteonGame
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Identity Configuration
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
-
-            // PostgreSql Connection
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
-
-            services.AddCors();
-
-            // MongoDb Settings Configuration
-            services.Configure<MongoDbSettings>(Configuration.GetSection("ConnectionStrings:MongoConnection"));
-            services.Configure<MongoDbSettings>(options =>
+            try
             {
-                options.ConnectionString = Configuration.GetConnectionString("MongoConnection");
-                options.DatabaseName = Configuration["MongoDatabaseName"];
-            });
-            services.AddSingleton<IMongoDbSettings>(serviceProvider =>
-            serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+                // Identity Configuration
+                services.AddIdentity<IdentityUser, IdentityRole>()
+                    .AddEntityFrameworkStores<AppDbContext>()
+                    .AddDefaultTokenProviders();
 
-                    services.AddScoped<IMongoClient>(serviceProvider =>
-                    {
-                        var settings = serviceProvider.GetRequiredService<IMongoDbSettings>();
-                        return new MongoClient(settings.ConnectionString);
-                    });
+                // PostgreSql Connection
+                services.AddDbContext<AppDbContext>(options =>
+                    options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
 
-            // JWT Authentication Configuration
-            services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+                //services.AddCors(options =>
+                //{
+                //    options.AddPolicy("CorsPolicy",
+                //        builder =>
+                //        {
+                //            builder.WithOrigins("https://www.mertcankocak.com") 
+                //                   .AllowAnyMethod()
+                //                   .AllowAnyHeader()
+                //                   .AllowCredentials();
+                //        });
+                //});
+                services.AddCors(options =>
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
+                    options.AddPolicy("CorsPolicy",
+                        builder =>
+                        {
+                            builder.WithOrigins("*")
+                                   .AllowAnyMethod()
+                                   .AllowAnyHeader();
+                        });
+                });
 
-            // JWT Settings Configuration
-            services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
+                // MongoDb Settings Configuration
+                services.Configure<MongoDbSettings>(Configuration.GetSection("ConnectionStrings:MongoConnection"));
+                services.Configure<MongoDbSettings>(options =>
+                {
+                    options.ConnectionString = Configuration.GetConnectionString("MongoConnection");
+                    options.DatabaseName = Configuration["MongoDatabaseName"];
+                });
 
-            // Other services
-            services.AddScoped<IMongoRepository<Building, ObjectId>, MongoRepository<Building, ObjectId>>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<ILogService, LogManager>();
-            services.AddScoped<IJwtService, JwtManager>();
-            services.AddScoped<IBuildingService, BuildingManager>();
+                services.AddSingleton<IMongoDbSettings>(serviceProvider =>
+                serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
 
-            // Controllers and OData Configuration
-            services.AddControllers(opt => opt.EnableEndpointRouting = false)
-                .AddOData(opt => opt.AddRouteComponents("odata", GetEdmModel()).EnableQueryFeatures());
+                services.AddScoped<IMongoClient>(serviceProvider =>
+                {
+                    var settings = serviceProvider.GetRequiredService<IMongoDbSettings>();
+                    return new MongoClient(settings.ConnectionString);
+                });
+
+                // JWT Authentication Configuration
+                services.AddAuthentication(opt =>
+                {
+                    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                }).AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtSettings:SecretKey"])),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+
+                // JWT Settings Configuration
+                services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
+
+                // Other services
+                services.AddScoped<IMongoRepository<Building, ObjectId>, MongoRepository<Building, ObjectId>>();
+                services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+                services.AddScoped<ILogService, LogManager>();
+                services.AddScoped<IJwtService, JwtManager>();
+                services.AddScoped<IBuildingService, BuildingManager>();
+                DynamicLogger.WriteLog("Uygulama 92");
+
+                // Controllers and OData Configuration
+                services.AddControllers(opt => opt.EnableEndpointRouting = false)
+                    .AddOData(opt => opt.AddRouteComponents("odata", GetEdmModel()).EnableQueryFeatures());
+            }
+            catch (Exception ex)
+            {
+                DynamicLogger.WriteLog($"ConfigureServices Hatası: {ex.Message}");
+            }
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            try
             {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                app.UseHsts();
-            }
-            
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+                
+                if (env.IsDevelopment())
+                {
+                    app.UseDeveloperExceptionPage();
+                }
+                else
+                {
+                    app.UseExceptionHandler("/Error");
+                    app.UseHsts();
+                }
 
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
+                app.UseHttpsRedirection();
+                app.UseStaticFiles();
+                app.UseCors("CorsPolicy");
+                app.UseRouting();
+                app.UseAuthentication();
+                app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                {
+                    var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
+                    context.Database.Migrate();
+                }
+
+            }
+            catch (Exception ex)
             {
-                endpoints.MapControllers();
-            });
+                DynamicLogger.WriteLog($"ConfigureServices Hatası 139: {ex.Message}");
+            }
+
         }
     }
 }

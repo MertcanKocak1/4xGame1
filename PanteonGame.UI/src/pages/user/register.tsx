@@ -7,7 +7,7 @@ import { RootStoreContext } from "../../helpers/stores/RootStore";
 import { observer } from "mobx-react-lite";
 
 const Register = () => {
-  const rootStore = useContext(RootStoreContext);
+  const { userStore } = useContext(RootStoreContext);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,49 +16,61 @@ const Register = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [apiError, setApiError] = useState<string | null>("");
-  const { register, error,clearError } = rootStore.userStore;
+
   const history = useHistory();
-  const handleRegister = async () => {
-    setUsernameError("");
-    setEmailError("");
-    setPasswordError("");
+
+  const validateInput = () => {
+    let isValid = true;
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?.&#])[A-Za-z\d@$!%*?&#.]{8,}$/;
 
+    setUsernameError("");
+    setEmailError("");
+    setPasswordError("");
+
     if (username.length < 3) {
       setUsernameError("Username should be at least 5 character.");
+      isValid = false;
     }
+
     if (!email.match(emailRegex)) {
       setEmailError("Invalid email format");
+      isValid = false;
     }
+
     if (!password.match(passwordRegex)) {
       setPasswordError("Password is not valid.");
+      isValid = false;
     }
-    if (username.length >= 3 && email.match(emailRegex) && password.match(passwordRegex)) {
-      try {
-        await register({ UserName : username, email, PasswordHash : password }); 
-        if(error){
-          setApiError(error); 
-          clearError();
-        }
-        else {
+
+    return isValid;
+  }
+
+  const handleRegister = async () => {
+    if (!validateInput()) return;
+
+    try {
+      await userStore.register({ UserName: username, email, PasswordHash: password });
+
+      if (userStore.error) {
+        setApiError(userStore.error); 
+        userStore.clearError();
+      } else {
         alert("Registration successful!");
-        history.push("/login");}
-      } catch (e) {
-        setApiError(error); 
+        history.push("/login");
       }
+    } catch (e) {
+      setApiError(userStore.error); 
+      userStore.clearError();
     }
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  const handleClickShowPassword = () => setShowPassword(prevState => !prevState);
+
 
   return (
     <div className="login-container">
-      <div className="user-icon">
-      </div>
       <h1>Register</h1>
       <div className="input-container">
         <TextField

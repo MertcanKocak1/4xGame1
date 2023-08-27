@@ -84,7 +84,7 @@ namespace PanteonGame.Controllers
 
         [HttpPut]
         [Authorize]
-        public async Task<IActionResult> Update(PmBuilding buildingModel)
+        public async Task<IActionResult> Update([FromBody] PmBuilding buildingModel)
         {
             try
             {

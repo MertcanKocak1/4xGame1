@@ -74,5 +74,6 @@ export default class UserStore {
     removeUser() {
         this.loginResponse = null;
         localStorage.removeItem('jwtToken');
+        localStorage.clear();
     }
 }
