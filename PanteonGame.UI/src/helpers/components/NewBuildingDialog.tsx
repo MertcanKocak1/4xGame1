@@ -63,11 +63,11 @@ const NewBuildingDialog= (props : NewBuildingDialogProps) => {
             <p>Construction Time (Seconds)</p>
             <NumericTextBox
                 style={{ width: "300px" }}
-                defaultValue={0}
+                defaultValue={30}
                 onChange={(e) => setConstructionTime(e.value)}
                 value={constructionTime}
-                min={0}
-                max={9999}
+                min={30}
+                max={1800}
                 placeholder='Please Enter Time'
             />
       <DialogActionsBar>
