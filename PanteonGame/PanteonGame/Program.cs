@@ -3,7 +3,9 @@ DynamicLogger.WriteLog("Uygulama Baþladý. 4 ");
 
 var builder = WebApplication.CreateBuilder(args);
 DynamicLogger.WriteLog("Uygulama Baþladý. 7");
-//builder.WebHost.UseUrls("https://api.mertcankocak.com");
+#if !DEBUG
+builder.WebHost.UseUrls("https://api.mertcankocak.com");
+#endif
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

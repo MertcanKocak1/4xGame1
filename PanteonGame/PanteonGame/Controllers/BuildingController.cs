@@ -32,7 +32,7 @@ namespace PanteonGame.Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = "BuildingController", MethodName = nameof(Get), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = "BuildingController", FunctionName = nameof(Get), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 return BadRequest();
             }
         }
@@ -55,7 +55,7 @@ namespace PanteonGame.Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = "BuildingController", MethodName = nameof(GetById), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = "BuildingController", FunctionName = nameof(GetById), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 return BadRequest();
             }
         }
@@ -66,6 +66,7 @@ namespace PanteonGame.Controllers
         {
             try
             {
+                DynamicLogger.WriteLog("Create Buildign Controller : 69");
                 var building = await _buildingService.AddBuildingAsync(buildingModel);
 
                 if (building == null)
@@ -77,7 +78,7 @@ namespace PanteonGame.Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = "BuildingController", MethodName = nameof(Create), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = "BuildingController", FunctionName = nameof(Create), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 return BadRequest();
             }
         }
@@ -99,7 +100,7 @@ namespace PanteonGame.Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = "BuildingController", MethodName = nameof(Update), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = "BuildingController", FunctionName = nameof(Update), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 return BadRequest();
             }
         }
@@ -122,7 +123,7 @@ namespace PanteonGame.Controllers
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = "BuildingController", MethodName = nameof(Delete), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = "BuildingController", FunctionName = nameof(Delete), ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 return BadRequest();
             }
         }

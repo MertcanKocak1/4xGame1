@@ -4,7 +4,7 @@ import {
   Field,
   FormElement,
 } from "@progress/kendo-react-form";
-import { NumericTextBox } from "@progress/kendo-react-inputs";
+import { Checkbox, NumericTextBox } from "@progress/kendo-react-inputs";
 import { DropDownList } from "@progress/kendo-react-dropdowns";
 import { observer } from 'mobx-react-lite';
 import { IBuildingParam } from "../models/Building";
@@ -15,6 +15,7 @@ import { useContext } from "react";
 interface EditFormProps {
   cancelEdit: () => void;
   item: IBuildingParam;
+  refreshGrid: () => void; 
 }
 
 const UpdateBuildingDialog = (props: EditFormProps) => {
@@ -32,10 +33,11 @@ const UpdateBuildingDialog = (props: EditFormProps) => {
             return;
         }
     
-        rootStore.buildingStore.updateBuilding(props.item.id, buildingValues)
+        rootStore.buildingStore.updateBuilding(buildingValues)
             .then(() => {
                 alert("Building updated successfully!");
                 props.cancelEdit(); 
+                props.refreshGrid();
             })
             .catch(error => {
                 console.error("Error updating the building:", error);
@@ -69,6 +71,13 @@ const UpdateBuildingDialog = (props: EditFormProps) => {
                     name="constructionTime" 
                     component={NumericTextBox}
                     label={"Construction Time(s)"}
+                  />
+                </div>
+                <div className="mb-3">
+                  <Field
+                    name="isDeleted" 
+                    component={Checkbox}
+                    label={"Deleted"}
                   />
                 </div>
               </fieldset>

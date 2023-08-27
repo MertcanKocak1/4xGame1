@@ -7,5 +7,7 @@ namespace Entities.Building
         public string BuildingType { get; set; }
         public double BuildingCost { get; set; }
         public int ConstructionTime { get; set; }
+        public bool IsDeleted { get; set; }
+
     }
 }

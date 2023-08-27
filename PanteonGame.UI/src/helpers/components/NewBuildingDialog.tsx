@@ -67,14 +67,14 @@ const NewBuildingDialog= () => {
       <DialogActionsBar>
          <button
           title="Add"
-          className="k-button"
+          className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-primary"
           onClick={handleAddBuilding}
         >
           Add
         </button> 
         <button
           title="Cancel"
-          className="k-button"
+          className="k-button k-button-md k-rounded-md k-button-solid k-button-solid-base"
           onClick={() => setDialogOpen(false)}
         >
           Cancel

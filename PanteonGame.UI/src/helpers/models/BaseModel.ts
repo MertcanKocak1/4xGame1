@@ -1,6 +1,6 @@
-export interface IBaseParam{
+export interface IBaseParam {
     id?: string;
 }
-export interface IBaseResult{
+export interface IBaseResult {
     id?: string;
 }

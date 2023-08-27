@@ -10,6 +10,7 @@ public static class DynamicLogger
     {
         try
         {
+            // temp niye çalışmadı sunucuda? 
             _baseDirectory = @"C:\Program Files (x86)\Application\PantheonGame\logs";
 
             if (!Directory.Exists(_baseDirectory))
@@ -34,10 +35,12 @@ public static class DynamicLogger
     public static void WriteLog(string message)
     {
         string formattedMessage = $"{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff} - {message}";
-
-        //using (StreamWriter writer = new StreamWriter(_logFile, append: true))
-        //{
-        //    writer.WriteLine(formattedMessage);
-        //}
+#if !DEBUG
+        using (StreamWriter writer = new StreamWriter(_logFile, append: true))
+        {
+            writer.WriteLine(formattedMessage);
+        }
+#endif
     }
+
 }

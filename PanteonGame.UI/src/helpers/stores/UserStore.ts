@@ -1,8 +1,8 @@
-import { AxiosError } from "axios";
-import UserApi from "../api/UserApi";
-import { ILoginResponse, IRegisterResponse, IUserParam, IUserResult } from "../models/User";
-import { RootStore } from "./RootStore";
-import { makeAutoObservable, action } from "mobx";
+import { AxiosError } from 'axios';
+import UserApi from '../api/UserApi';
+import { ILoginResponse, IRegisterResponse, IUserParam, IUserResult } from '../models/User';
+import { RootStore } from './RootStore';
+import { makeAutoObservable, action } from 'mobx';
 
 interface IApiError {
     message: string;
@@ -46,29 +46,29 @@ export default class UserStore {
     }
     handleError(error: unknown) {
         if (error && typeof error === 'object' && 'response' in error) {
-          const axiosError = error as AxiosError<IApiError>;
-          const responseData : any = axiosError.response?.data ;
-      
-        if (typeof responseData === 'object' && "" in responseData) {
-            const firstErrorMessage = responseData[""][0];
-            this.error = firstErrorMessage || "An unexpected error occurred.";
-          } else {
-            const message = (responseData as IApiError)?.message;
-            this.error = message || "An unexpected error occurred.";
-          }
+            const axiosError = error as AxiosError<IApiError>;
+            const responseData: any = axiosError.response?.data;
+
+            if (typeof responseData === 'object' && '' in responseData) {
+                const firstErrorMessage = responseData[''][0];
+                this.error = firstErrorMessage || 'An unexpected error occurred.';
+            } else {
+                const message = (responseData as IApiError)?.message;
+                this.error = message || 'An unexpected error occurred.';
+            }
         } else {
-          this.error = "An unexpected error occurred.";
+            this.error = 'An unexpected error occurred.';
         }
-      }
+    }
     setUser(loginResponse: ILoginResponse) {
         if (loginResponse && loginResponse.token) {
             this.loginResponse = loginResponse;
             localStorage.setItem('jwtToken', loginResponse.token);
         } else {
-            this.error = "Received user data is missing jwtToken.";
+            this.error = 'Received user data is missing jwtToken.';
         }
     }
-    clearError(){ 
+    clearError() {
         this.error = null;
     }
     removeUser() {

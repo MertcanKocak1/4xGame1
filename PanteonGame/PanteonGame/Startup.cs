@@ -38,18 +38,23 @@ namespace PanteonGame
                 // PostgreSql Connection
                 services.AddDbContext<AppDbContext>(options =>
                     options.UseNpgsql(Configuration.GetConnectionString("PostgreSqlConnection")));
-
-                //services.AddCors(options =>
-                //{
-                //    options.AddPolicy("CorsPolicy",
-                //        builder =>
-                //        {
-                //            builder.WithOrigins("https://www.mertcankocak.com") 
-                //                   .AllowAnyMethod()
-                //                   .AllowAnyHeader()
-                //                   .AllowCredentials();
-                //        });
-                //});
+#if !DEBUG
+                services.AddCors(options =>
+                {
+                    options.AddPolicy("CorsPolicy",
+                        builder =>
+                        {
+                            builder.AllowAnyMethod()
+                                   .AllowAnyHeader()
+                                   .AllowCredentials()
+                                   .WithOrigins("localhost", "https://www.mertcankocak.com")
+                                   .SetIsOriginAllowed(origin => string.IsNullOrEmpty(origin) ||
+                                                                 origin.ToLower() == "localhost" || 
+                                                                 origin.ToLower() == "https://www.mertcankocak.com");
+                        });
+                });
+#endif
+#if DEBUG
                 services.AddCors(options =>
                 {
                     options.AddPolicy("CorsPolicy",
@@ -60,7 +65,7 @@ namespace PanteonGame
                                    .AllowAnyHeader();
                         });
                 });
-
+#endif
                 // MongoDb Settings Configuration
                 services.Configure<MongoDbSettings>(Configuration.GetSection("ConnectionStrings:MongoConnection"));
                 services.Configure<MongoDbSettings>(options =>

@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Abstract;
 using DataAccessLayer.Abstract.Repository;
+using DTO;
 using DTO.Params;
 using DTO.Results;
 using Entities.Building;
@@ -25,12 +26,12 @@ namespace BusinessLayer.Concrete
             try
             {
                 var buildings = await _buildingRepository.Get();
-                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "GetAllBuildingsAsync", DataAfterOperation = buildings?.ToJson(), Message = "Fetched all buildings." });
-                return buildings.Select(b => b.ToResultDto()).AsQueryable();
+                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "GetAllBuildingsAsync", Message = "Fetched all buildings."});
+                return buildings.Select(b => EntityConverter.ToResultDto(b)).AsQueryable();
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = ClassName, MethodName = "GetAllBuildingsAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = ClassName, FunctionName = "GetAllBuildingsAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 throw;
             }
         }
@@ -40,12 +41,12 @@ namespace BusinessLayer.Concrete
             try
             {
                 var building = await _buildingRepository.GetByIdAsync(id);
-                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "GetBuildingByIdAsync", DataAfterOperation = building?.ToJson(), Message = "Building fetched by ID." });
+                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "GetBuildingByIdAsync", Message = "Building fetched by ID." });
                 return building.ToResultDto();
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = ClassName, MethodName = "GetBuildingByIdAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = ClassName, FunctionName = "GetBuildingByIdAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 throw;
             }
         }
@@ -54,14 +55,15 @@ namespace BusinessLayer.Concrete
         {
             try
             {
+                buildingDto.IsDeleted = false;
                 var buildingEntity = buildingDto.ToEntity();
                 var addedBuilding = await _buildingRepository.AddAsync(buildingEntity);
-                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "AddBuildingAsync", DataBeforeOperation = buildingDto?.ToJson(), DataAfterOperation = addedBuilding?.ToJson(), Message = "Building added successfully." });
+                _logService.LogInfo(new PmLog { ClassName = ClassName, MethodName = "AddBuildingAsync", DataBeforeOperation = null, DataAfterOperation = addedBuilding?.ToJson(), Message = "Building added successfully." });
                 return addedBuilding.ToResultDto();
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = ClassName, MethodName = "AddBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = ClassName, FunctionName = "AddBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 throw;
             }
         }
@@ -78,7 +80,7 @@ namespace BusinessLayer.Concrete
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = ClassName, MethodName = "UpdateBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = ClassName, FunctionName = "UpdateBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 throw;
             }
         }
@@ -97,36 +99,10 @@ namespace BusinessLayer.Concrete
             }
             catch (Exception ex)
             {
-                _logService.LogError(new PmLogError { ClassName = ClassName, MethodName = "DeleteBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
+                _logService.LogError(new PmLogError { ClassName = ClassName, FunctionName = "DeleteBuildingAsync", ErrorMessage = ex.Message, StackTrace = ex.StackTrace });
                 throw;
             }
         }
     }
-
-
-    public static class BuildingMapper
-    {
-        public static Building ToEntity(this PmBuilding dto)
-        {
-            return new Building
-            {
-                BuildingType = dto.BuildingType,
-                BuildingCost = dto.BuildingCost,
-                ConstructionTime = dto.ConstructionTime
-            };
-        }
-
-        public static RsBuilding ToResultDto(this Building entity)
-        {
-            return new RsBuilding
-            {
-                Id = entity.Id.ToString(), 
-                BuildingType = entity.BuildingType,
-                BuildingCost = entity.BuildingCost,
-                ConstructionTime = entity.ConstructionTime
-            };
-        }
-    }
-
 
 }

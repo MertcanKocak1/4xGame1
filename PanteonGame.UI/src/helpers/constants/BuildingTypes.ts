@@ -3,5 +3,5 @@ export enum BuildingTypes {
     Academy = 'Academy',
     Headquarters = 'Headquarters',
     LumberMill = 'LumberMill',
-    Barracks = 'Barracks'
-  }
+    Barracks = 'Barracks',
+}
