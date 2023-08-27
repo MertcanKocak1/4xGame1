@@ -147,7 +147,7 @@ const BuildingManagement = observer(() => {
                 <Column cell={MyEditCommandCell} filterable={false} sortable={false} />
             </Grid>
             {openForm && <UpdateBuildingDialog cancelEdit={handleCancelEdit} item={editItem!} refreshGrid={fetchBuildings} />}
-            {isDialogOpen && <NewBuildingDialog />}
+            {isDialogOpen && <NewBuildingDialog refreshGrid= {fetchBuildings}/>}
         </>
     );
 });

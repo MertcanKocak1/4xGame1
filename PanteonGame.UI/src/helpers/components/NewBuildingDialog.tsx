@@ -7,7 +7,12 @@ import {ComboBox} from "@progress/kendo-react-dropdowns";
 import { NumericTextBox } from "@progress/kendo-react-inputs";
 import { IBuildingParam } from '../models/Building';
 
-const NewBuildingDialog= () => {
+
+interface NewBuildingDialogProps {
+  refreshGrid: () => void; 
+}
+
+const NewBuildingDialog= (props : NewBuildingDialogProps) => {
     const rootStore =  useContext(RootStoreContext);
     const {setDialogOpen} = rootStore.buildingStore;
     const [buildingType, setBuildingType] = useState<BuildingTypes | undefined>();
@@ -29,6 +34,7 @@ const NewBuildingDialog= () => {
             addBuilding(building);
             clearProps();
             setDialogOpen(false);
+            props.refreshGrid();
     }
     else { 
       alert("Please Enter All The Fields"); 
